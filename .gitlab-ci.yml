@@ -38,7 +38,7 @@ env:
 node:
   stage: build
   image:
-    name: nodejs:24-alpine
+    name: node:24-alpine
     pull_policy: if-not-present
   script:
     - npm i -g yarn
