@@ -58,6 +58,8 @@ deploy:
       artifacts: true
     - job: env
       artifacts: true
+    - job: node
+      artifacts: true
   before_script:
     - eval $(ssh-agent -s)
     - /usr/bin/setup.sh
