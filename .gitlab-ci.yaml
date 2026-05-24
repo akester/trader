@@ -1,0 +1,53 @@
+image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/akester/php:8.4
+
+variables:
+  DEPLOY_USER: trader
+
+  GIT_SUBMODULE_STRATEGY: recursive
+
+  DEPLOY_PATH: /home/web/html
+  DEPLOY_SERVER: 10.0.8.36
+
+# Define the stages of the pipeline
+stages:
+  - build
+  - deploy
+
+composer:
+  stage: build
+  script:
+    - composer install --optimize-autoloader --no-dev
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 week
+
+env:
+  stage: build
+  script:
+    - cp .env.example .env
+    - php artisan key:generate
+  artifacts:
+    paths:
+      - .env
+    expire_in: 1 week
+
+deploy:
+  stage: deploy
+  image:
+    name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/akester/rsync
+  needs:
+    - job: composer
+      artifacts: true
+    - job: env
+      artifacts: true
+  before_script:
+    - eval $(ssh-agent -s)
+    - /usr/bin/setup.sh
+
+  script:
+    - rsync -e 'ssh -p 2222' -rvh --delete ./ "$DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH/"
+    - ssh -p 2222 "$DEPLOY_USER@$DEPLOY_SERVER" "cd $DEPLOY_PATH && ./deploy.sh"
+  
+  only:
+    - master
