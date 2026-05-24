@@ -24,6 +24,9 @@ composer:
 
 env:
   stage: build
+  needs:
+   - job: composer
+     artifacts: true
   script:
     - cp .env.example .env
     - php artisan key:generate
