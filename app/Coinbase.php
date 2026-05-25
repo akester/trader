@@ -96,7 +96,7 @@ class Coinbase
             return Cache::get($cache_key);
         }
 
-        Log::Info('JWT fetch miss, getting a new one');
+        Log::Info('JWT cache miss, getting a new one');
 
         $jwt = $this->issueJWT();
 
