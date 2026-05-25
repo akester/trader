@@ -3,12 +3,49 @@
 namespace App;
 
 use Firebase\JWT\JWT;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class Coinbase
 {
     public static $JWT_LIFETIME = '100';
+
+    /**
+     * GuzzleHTTP client
+     * @var $client GuzzleHTTP client instance
+     */
+    private $client;
+
+    public function __construct()
+    {
+        $this->client = new Client([
+            'base_uri' => 'https://api.coinbase.com/',
+            'timeout' => 5,
+        ]);
+    }
+
+    /**
+     * Do a request to Coinbase, appending the URI needed and our auth headers
+     * @param string $path The path to the API endpoint
+     * @param string $method The HTTP method (default: GET)
+     * @param array $params Additional parameters for the request
+     * @return mixed JSON
+     */
+    private function doRequest($path, $method = 'get', $params = [])
+    {
+        $token = $this->getJWT();
+        $path = "/api/v3/brokerage" . $path;
+
+        $all_params = array_merge($params, [
+            'headers' => [
+                'Authorization' => "Bearer $token",
+            ]
+        ]);
+
+        $resp = $this->client->request($method, $path, $all_params);
+        return json_decode((string) $resp->getBody(), true);
+    }
 
     /**
      * Get a new JWT directly from Coinbase.
@@ -65,5 +102,27 @@ class Coinbase
 
         Cache::add($cache_key, $jwt, self::$JWT_LIFETIME);
         return $jwt;
+    }
+
+    /**
+     * Get accounts (wallets) on the Coinbase account.
+     * @param string $token Token type to get wallet for, default get all
+     * @return array The list of wallets
+     */
+    public function getAccounts($token = '')
+    {
+        $accounts = $this->doRequest('/accounts')['accounts'];
+        if ($token) {
+            $accounts = array_filter($accounts, function ($account) use ($token) {
+                return $account['currency'] == $token;
+            });
+
+            // If we filter, downstream logic expects just one so catch if we're doing something wrong here
+            if (count($accounts) > 1) {
+                throw new \Exception('Expected exactly one account with the specified token');
+            }
+        }
+
+        return $accounts;
     }
 }
