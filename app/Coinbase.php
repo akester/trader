@@ -3,15 +3,20 @@
 namespace App;
 
 use Firebase\JWT\JWT;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class Coinbase
 {
+    public static $JWT_LIFETIME = '100';
+
     /**
-     * Get a Coinbase JWT token
+     * Get a new JWT directly from Coinbase.
+     * @return string The JWT token.
      */
-    public function getJWT()
+    public function issueJWT()
     {
-        $keyName =config('coinbase.key');
+        $keyName = config('coinbase.key');
         $keySecret = str_replace('\\n', "\n", config('coinbase.secret'));
 
         $request_method = 'GET';
@@ -40,5 +45,25 @@ class Coinbase
         ];
         $jwtToken = JWT::encode($jwtPayload, $privateKeyResource, 'ES256', $keyName, $headers);
         return $jwtToken;
+    }
+
+    /**
+     * Get a Coinbase JWT, and check the cache.
+     * @return string The JWT token.
+     */
+    public function getJWT()
+    {
+        $cache_key = 'coinbase_jwt';
+
+        if (Cache::has($cache_key)) {
+            return Cache::get($cache_key);
+        }
+
+        Log::Info('JWT fetch miss, getting a new one');
+
+        $jwt = $this->issueJWT();
+
+        Cache::add($cache_key, $jwt, self::$JWT_LIFETIME);
+        return $jwt;
     }
 }
