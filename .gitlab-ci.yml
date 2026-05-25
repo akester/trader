@@ -28,7 +28,7 @@ env:
    - job: composer
      artifacts: true
   script:
-    - cp .env.example .env
+    - cp .env.prod .env
     - php artisan key:generate
   artifacts:
     paths:
