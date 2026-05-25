@@ -11,6 +11,8 @@ class Coinbase
 {
     public static $JWT_LIFETIME = '100';
 
+    public static $API_HOST = 'api.coinbase.com';
+
     /**
      * GuzzleHTTP client
      * @var $client GuzzleHTTP client instance
@@ -20,7 +22,7 @@ class Coinbase
     public function __construct()
     {
         $this->client = new Client([
-            'base_uri' => 'https://api.coinbase.com/',
+            'base_uri' => "https://" . self::$API_HOST,
             'timeout' => 5,
         ]);
     }
@@ -34,8 +36,8 @@ class Coinbase
      */
     private function doRequest($path, $method = 'get', $params = [])
     {
-        $token = $this->getJWT();
         $path = "/api/v3/brokerage" . $path;
+        $token = $this->issueJWT($method, $path);
 
         $all_params = array_merge($params, [
             'headers' => [
@@ -51,16 +53,12 @@ class Coinbase
      * Get a new JWT directly from Coinbase.
      * @return string The JWT token.
      */
-    public function issueJWT()
+    private function issueJWT($method = 'get', $path = '/api/v3/brokerage/accounts')
     {
         $keyName = config('coinbase.key');
         $keySecret = str_replace('\\n', "\n", config('coinbase.secret'));
 
-        $request_method = 'GET';
-        $url = 'api.coinbase.com';
-        $request_path = '/api/v3/brokerage/accounts';
-
-        $uri = $request_method . ' ' . $url . $request_path;
+        $uri = strtoupper($method) . ' ' . self::$API_HOST . $path;
         $privateKeyResource = openssl_pkey_get_private($keySecret);
         if (!$privateKeyResource) {
             throw new \Exception('Private key is not valid');
@@ -85,26 +83,6 @@ class Coinbase
     }
 
     /**
-     * Get a Coinbase JWT, and check the cache.
-     * @return string The JWT token.
-     */
-    public function getJWT()
-    {
-        $cache_key = 'coinbase_jwt';
-
-        if (Cache::has($cache_key)) {
-            return Cache::get($cache_key);
-        }
-
-        Log::Info('JWT cache miss, getting a new one');
-
-        $jwt = $this->issueJWT();
-
-        Cache::add($cache_key, $jwt, self::$JWT_LIFETIME);
-        return $jwt;
-    }
-
-    /**
      * Get accounts (wallets) on the Coinbase account.
      * @param string $token Token type to get wallet for, default get all
      * @return array The list of wallets
@@ -124,5 +102,15 @@ class Coinbase
         }
 
         return $accounts;
+    }
+
+    public function getOrders() {
+        $orders = $this->doRequest('/orders/historical/batch');
+        return $orders;
+    }
+
+     public function getFills() {
+        $fills = $this->doRequest('/orders/historical/fills');
+        return $fills;
     }
 }
