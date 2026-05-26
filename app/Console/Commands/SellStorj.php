@@ -34,7 +34,7 @@ class SellStorj extends Command
             $balance = Coinbase::$MAX_TRADE_VOLUME;
         }
 
-        $balance = round($balance, 4);
+        $balance = round($balance, 3);
 
         // Check if we have an order in cooldown, this gives the first one time
         // to complete before we tell it to do another.
