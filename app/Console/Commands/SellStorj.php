@@ -70,6 +70,7 @@ class SellStorj extends Command
             'status' => 'pending',
             'coinbase_id' => $order['success_response']['order_id'],
         ]);
+        $trade->save();
         $this->info('Order created: Sell ' . $balance . ' STORJ for USDC');
     }
 }

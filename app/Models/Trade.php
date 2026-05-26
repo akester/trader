@@ -15,6 +15,7 @@ class Trade extends Model
         'status',
         'total_fees',
         'uuid',
+        'coinbase_id',
     ];
 
     protected $types = [
