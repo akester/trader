@@ -9,6 +9,7 @@ use App\Notifications\TradeFailed;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 #[Signature('app:check:orders')]
@@ -41,6 +42,7 @@ class CheckOrders extends Command
                     ]);
                     $trade->save();
                     $this->info('Trade ID ' . $trade->coinbase_id . ' is completed.');
+                    Log::info('Trade ID ' . $trade->coinbase_id . ' is completed.');
                     Notification::route('mail', config('app.notify-email'))->notify(new TradeComplete($trade));
                     break;
                 case 'CANCELLED':
@@ -51,6 +53,7 @@ class CheckOrders extends Command
                     ]);
                     $trade->save();
                     $this->info('Trade ID ' . $trade->coinbase_id . ' is failed.');
+                    Log::info('Trade ID ' . $trade->coinbase_id . ' is failed.');
                     Notification::route('mail', config('app.notify-email'))->notify(new TradeFailed($trade));
                     break;
                 

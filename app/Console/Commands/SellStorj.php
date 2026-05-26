@@ -7,6 +7,7 @@ use App\Models\Trade;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
 
 #[Signature('app:sell:storj')]
@@ -60,6 +61,7 @@ class SellStorj extends Command
 
         if (!$order['success']) {
             $this->error('Failed to create order: ' . $order['error_response']['message']);
+            Log::error("Failed to create sell order: ". $order['error_response']['message']);
             $trade->update([
                 'status' => 'create-failed',
             ]);
@@ -72,5 +74,6 @@ class SellStorj extends Command
         ]);
         $trade->save();
         $this->info('Order created: Sell ' . $balance . ' STORJ for USDC');
+        Log::info("Created order " . $order['success_response']['order_id'] . " to sell " . $balance . " STORJ");
     }
 }
