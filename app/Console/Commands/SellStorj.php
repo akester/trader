@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 use Ramsey\Uuid\Uuid;
 
 #[Signature('app:sell:storj')]
-#[Description('Command description')]
+#[Description('Sell outstanding Storj balance')]
 class SellStorj extends Command
 {
     /**
