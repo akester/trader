@@ -17,9 +17,13 @@ return new class extends Migration
             $table->string('from_token');
             $table->string('to_token');
             $table->decimal('from_amount', 20, 8);
-            $table->decimal('to_amount', 20, 8);
+            $table->decimal('to_amount', 20, 8)
+                ->nullable(true)
+                ->default(null);
             $table->string('status');
-            $table->decimal('total_fees', 20, 8);
+            $table->decimal('total_fees', 20, 8)
+                ->nullable(true)
+                ->default(null);
             $table->timestamps();
         });
     }
