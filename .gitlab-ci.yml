@@ -40,6 +40,10 @@ env:
     - echo "MAIL_PASSWORD=$SMTP_PASSWORD" >> .env
     - echo "MAIL_FROM_ADDRESS=$MAIL_FROM" >> .env
     - echo "MAIL_HOST=$SMTP_SERVER" >> .env
+
+    - echo "DB_USERNAME=$DB_USER" >> .env
+    - echo "DB_PASSWORD=$DB_PASS" >> .env
+    - echo "DB_DATABASE=$DB_DATABASE" >> .env
   artifacts:
     paths:
       - .env
