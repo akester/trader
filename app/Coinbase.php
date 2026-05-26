@@ -18,7 +18,7 @@ class Coinbase
     /**
      * @var int $MAX_TRADE_VOLUME Maximum trade volume in STORJ
      */
-    public static $MAX_TRADE_VOLUME = 1;
+    public static $MAX_TRADE_VOLUME = 0;
 
     /**
      * @var int $COOLDOWN_MINS Cooldown in minutes between trades
