@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TradeFailed extends Notification implements ShouldQueue
+class TradeFailed extends Notification
 {
     use Queueable;
 
