@@ -175,6 +175,11 @@ class Coinbase
         return $resp;
     }
 
+    public function getOrder($id) {
+        $order = $this->doRequest('/orders/historical/' . $id);
+        return $order['order'];
+    }
+
     public function getFills()
     {
         $fills = $this->doRequest('/orders/historical/fills');
