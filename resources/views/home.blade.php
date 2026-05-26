@@ -22,7 +22,13 @@
                     </div>
                 </div>
 
-                
+                @foreach ($trades as $trade)
+                <div class="row">
+                    <div class="col">
+                        {{ dump($trade) }}
+                    </div>
+                </div>
+                @endforeach
             </div>
         </div>
     </body>
