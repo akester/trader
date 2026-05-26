@@ -30,6 +30,10 @@ env:
   script:
     - cp .env.prod .env
     - php artisan key:generate
+
+    - echo "COINBASE_KEY=$COINBASE_KEY" >> .env
+    - echo "COINBASE_SECRET=$COINBASE_SECRET" >> .env
+    - echo "NOTIFICATION_EMAIL=$NOTIFICATION_EMAIL" >> .env
   artifacts:
     paths:
       - .env
