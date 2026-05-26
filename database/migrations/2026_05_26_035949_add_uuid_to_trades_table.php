@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::table('trades', function (Blueprint $table) {
             $table->string('uuid')->unique()->after('id');
+            $table->string('coinbase_id')
+                ->unique()
+                ->nullable(true)
+                ->default(null)
+                ->after('uuid');
         });
     }
 
@@ -23,6 +28,7 @@ return new class extends Migration
     {
         Schema::table('trades', function (Blueprint $table) {
             $table->dropColumn('uuid');
+            $table->dropColumn('coinbase_id');
         });
     }
 };

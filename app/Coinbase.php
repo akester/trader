@@ -9,9 +9,21 @@ use Illuminate\Support\Facades\Log;
 
 class Coinbase
 {
-    public static $JWT_LIFETIME = '100';
 
+    /**
+     * @var string $API_HOST API host for API calls
+     */
     public static $API_HOST = 'api.coinbase.com';
+
+    /**
+     * @var int $MAX_TRADE_VOLUME Maximum trade volume in STORJ
+     */
+    public static $MAX_TRADE_VOLUME = 1;
+
+    /**
+     * @var int $COOLDOWN_MINS Cooldown in minutes between trades
+     */
+    public static $COOLDOWN_MINS = 10;
 
     /**
      * GuzzleHTTP client
@@ -104,10 +116,63 @@ class Coinbase
         return $accounts;
     }
 
+    /**
+     * Get balance for a token
+     * @param string $token Token type to get balance for
+     * @return float The balance of the token
+     */
+    public function getBalance($token) {
+        $account = $this->getAccounts($token);
+        return (float) $account[1]['available_balance']['value'];
+    }
+
+    /**
+     * Get the public trade pair product for two tokens or token/currency
+     * @param string $token1 First token or currency
+     * @param string $token2 Second token or currency
+     * @return array Response from API
+     */
+    public function getTradePair($token1, $token2) {
+        $tokenPair = $token1 . '-' . $token2;
+        $resp = $this->doRequest('/market/products/' . $tokenPair);
+        return $resp;
+    }
+
+    /**
+     * Get past orders on the account
+     * @return array Response from API
+     */
     public function getOrders()
     {
         $orders = $this->doRequest('/orders/historical/batch');
-        return $orders;
+        return $orders['orders'];
+    }
+
+    /**
+     * Make a new Sell order
+     * @param string $token1 First token or currency
+     * @param string $token2 Second token or currency
+     * @param float $volume Volume to sell
+     * @param string $uuid Unique identifier for the order
+     * @param string $side Side of the order (BUY or SELL) default is SELL
+     */
+    public function createOrder($token1, $token2, $volume, $uuid, $side = 'SELL') {
+        $tokenPair = $token1 . '-' . $token2;
+
+        $resp = $this->doRequest('/orders', 'POST', [
+            'json' => [
+                'side' => $side,
+                'product_id' => $tokenPair,
+                'client_order_id' => $uuid,
+                'order_configuration' => [
+                    'market_market_ioc' => [
+                        'base_size' => (string) $volume,
+                    ]
+                ]
+            ]
+        ]);
+
+        return $resp;
     }
 
     public function getFills()
