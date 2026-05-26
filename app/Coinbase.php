@@ -104,12 +104,14 @@ class Coinbase
         return $accounts;
     }
 
-    public function getOrders() {
+    public function getOrders()
+    {
         $orders = $this->doRequest('/orders/historical/batch');
         return $orders;
     }
 
-     public function getFills() {
+    public function getFills()
+    {
         $fills = $this->doRequest('/orders/historical/fills');
         return $fills;
     }
