@@ -14,6 +14,7 @@ class Trade extends Model
         'to_amount',
         'status',
         'total_fees',
+        'uuid',
     ];
 
     protected $types = [
