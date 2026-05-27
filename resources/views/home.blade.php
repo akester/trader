@@ -29,14 +29,14 @@
                     </div>
                     <div class="col-4 trade-volume">
                         <span class="left">
-                            {{ round($trade->from_amount) }}
+                            ~ {{ round($trade->from_amount, 3) }}
                             <span class="token">
                                 {{ strtoupper($trade->from_token) }}
                             </span>
                         </span>
 
                         <span class="right">
-                            {{ round($trade->to_amount) }}
+                            ~ {{ round($trade->to_amount, 3) }}
                             <span class="token">
                                 {{ strtoupper($trade->to_token) }}
                             </span>
