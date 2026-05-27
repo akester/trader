@@ -19,6 +19,10 @@ class Trade extends Model
     ];
 
     protected $types = [
-        'storj-sale',
+        'sell-storj' => 'Sell Storj',
     ];
+
+    public function getType() {
+        return $this->types[$this->type];
+    }
 }
