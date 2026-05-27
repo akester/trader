@@ -24,10 +24,10 @@
 
                 @foreach ($trades as $trade)
                 <div class="row trade">
-                    <div class="col-8 trade-type">
+                    <div class="col-12 col-md-7 trade-type">
                         {{ $trade->getType() }}
                     </div>
-                    <div class="col-4 trade-volume">
+                    <div class="col-12 col-md-5 trade-volume">
                         <span class="left">
                             ~ {{ round($trade->from_amount, 3) }}
                             <span class="token">
