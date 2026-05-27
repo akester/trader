@@ -3,7 +3,7 @@
 Trader is an automated tool to sell STORJ tokens on Coinbase (almost) as soon as
 you get them.
 
-## Motiviation
+## Motivation
 
 STORJ pays its SNOs in STORJ token which has a side-effect of having significant
 price changes quickly after payouts are sent.  For folks who take even a few
