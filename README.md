@@ -92,4 +92,4 @@ php artisan config:cache
 ```
 
 At some point, I may docker-ize this setup into a Docker Compose deployment, but
-I deploy this some internal tooling so I would have to write that up.
+I deploy this via some internal tooling so I would have to write that up.
