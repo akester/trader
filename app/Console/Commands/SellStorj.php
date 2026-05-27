@@ -48,7 +48,7 @@ class SellStorj extends Command
 
         // Create the new order in the database
         $trade = new Trade([
-            'type' => 'storj-sale',
+            'type' => 'sell-storj',
             'from_token' => 'STORJ',
             'to_token' => 'USDC',
             'from_amount' => (string) $balance,
