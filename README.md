@@ -14,6 +14,35 @@ This tools connects to Coinbase and checks if your account has any STORJ every
 30 minutes or so.  If it finds any, it sells them to USDC in an order and sends
 a notification.
 
+This tool uses Laravel mostly because:
+
+* This was a quick write, and Laravel has a lot of the tools needed
+  (notifications, frontend stuff) built in.
+* I have templates to host sites running on a PHP stack ready, so it's easy to
+  spin up in my K3S cluster.
+* I used to write a lot of Laravel code in a past life, so I'm reasonably
+  familiar with things.
+
+## Theory
+
+This tool will do an API call every 30 minutes to Coinbase to check the balance
+of your STORJ wallet.  If the balance is over 1 STORJ, it will create a new
+order to sell your STORJ for USDC at the current market price.  It then will
+check the order it just created (usually the sells only take a moment), or check
+back every 30 minutes to see if its been filled.
+
+The order is using the Advanced Trade API, so it's visible in your Coinbase
+account though it may prompt you to enable Advanced mode to actually see it. The
+specific order type is an "Immediate Or Cancel" type, which should sell the
+token at the quoted price or better immediately, or cancel the part of the order
+that cannot be filled.  If the transaction fails or is a partial fill, any
+remaining balance will be sold on the next run.
+
+The orders are saved into a web dashboard that you can use to view the history,
+see trade fees, etc.  There is no authentication or user management, but the
+dashboard is read-only (there are no settings to change or even private data
+outside of transaction history visible).
+
 ## Authentication
 
 This uses a fixed API token for a single Coinbase account.   This basically
