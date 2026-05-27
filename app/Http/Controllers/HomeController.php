@@ -12,7 +12,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $trades = Trade::orderBy('created_at', 'desc')->limit(50)->get();
+        $trades = Trade::where('status', '!=', 'create-failed')
+            ->orderBy('created_at', 'desc')
+            ->limit(50)->get();
 
         return view('home', compact('trades'));
     }
