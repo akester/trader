@@ -12,7 +12,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
-#[Signature('app:check:orders')]
+#[Signature('app:orders:check')]
 #[Description('Check the status of outstanding orders')]
 class CheckOrders extends Command
 {
