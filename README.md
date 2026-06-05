@@ -91,5 +91,17 @@ php artisan cache:clear
 php artisan config:cache
 ```
 
+You then need to create a cron job that runs the scheudler every minute.  This
+will watch the clock and run the sell commands on their schedule as needed:
+
+```
+* * * * * cd /path/to/code && php artisan schedule:run
+```
+
 At some point, I may docker-ize this setup into a Docker Compose deployment, but
 I deploy this via some internal tooling so I would have to write that up.
+
+## Roadmap
+
+* Keep tabs on the price after a trade and show the gain/loss from selling
+  quickly.
